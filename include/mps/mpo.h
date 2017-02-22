@@ -78,7 +78,6 @@ namespace mps {
       space. Use with care with only small tensors, as this may exhaust the
       memory of your computer. */
   const CTensor mpo_to_matrix(const CMPO &A);
-
 }
 
 #endif /* !MPO_MPO_H */

@@ -85,6 +85,16 @@ namespace mps {
   double solve(const CMPO &H, CMPS *ptrP, const CMPS &Q, int *sense, index sweeps,
                bool normalize = false, index Dmax = 0, double tol = -1);
 
+  double eigenstate_fidelity(const RMPO &H, const RMPS &psi,
+                             double &simp_err, double simp_tol,
+                             tensor::index simp_sweeps, tensor::index simp_Dmax,
+                             double *ptrE = 0);
+  
+  double eigenstate_fidelity(const CMPO &H, const CMPS &psi,
+                             double &simp_err, double simp_tol,
+                             tensor::index simp_sweeps, tensor::index simp_Dmax,
+                             double *ptrE = 0);
+
 } // namespace mps
 
 #endif // !MPS_MPS_ALGORITHM_H

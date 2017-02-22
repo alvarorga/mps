@@ -21,6 +21,7 @@
 #include <tensor/io.h>
 #include <tensor/linalg.h>
 #include <mps/minimizer.h>
+#include <mps/mps_algorithms.h>
 #include <mps/qform.h>
 
 namespace mps {
@@ -70,6 +71,7 @@ namespace mps {
     index site;
     int step;
     bool converged;
+    mpo_t Hmpo;
 
     Minimizer(const MinimizerOptions &opt, const mpo_t &H, const mps_t &state) :
       MinimizerOptions(opt),
@@ -80,7 +82,8 @@ namespace mps {
       Ntol(1e-6),
       site(0),
       step(+1),
-      converged(true)
+      converged(true),
+      Hmpo(H)
     {}
 
     ~Minimizer()
@@ -231,8 +234,10 @@ namespace mps {
       return !Dmax;
     }
 
-    double full_sweep(mps_t *psi) {
+    double full_sweep(mps_t *psi, double &eig_fidelity, double &simp_err) {
       double E = 1e28;
+      eig_fidelity = -1.;
+      simp_err = -1.;
       if (debug) {
         std::cout << "***\n*** Algorithm with " << size() << " sites, "
                   << "two-sites = " << !single_site()
@@ -256,7 +261,7 @@ namespace mps {
             if (debug) {
               std::cout << "Reached tolerance dE=" << newE-E
                         << "<=" << tolerance << '\n' << std::flush;
-            }
+              }
             E = newE;
             break;
           }
@@ -274,6 +279,17 @@ namespace mps {
         E = newE;
       }
       *psi = state();
+      // Compute the eigenstate fidelity
+      if (do_eigenstate_fidelity) {
+        eig_fidelity = eigenstate_fidelity(Hmpo, *psi, simp_err,
+                                           simp_tol, simp_sweeps,
+                                           simp_Dmax, &E);
+        if (debug) {
+          std::cout << "Eigenstate fidelity=" << eig_fidelity
+                    << ", simplification error=" << simp_err
+                    << '\n' << std::flush;
+        }
+      }
       return E;
     }
   };

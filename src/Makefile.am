@@ -138,6 +138,8 @@ libmps_la_SOURCES = \
 	evolve/solver_trotter3.cc \
 	evolve/solver_trotter4.cc \
 	evolve/arnoldi.cc \
+	dmrg/eigenstate_fidelity_d.cc \
+	dmrg/eigenstate_fidelity_z.cc \
 	dmrg/qform_d.cc \
 	dmrg/qform_z.cc \
 	dmrg/lform_d.cc \

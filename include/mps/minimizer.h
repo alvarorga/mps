@@ -29,7 +29,9 @@ namespace mps {
 
     MinimizerOptions() :
       sweeps(32), display(false), debug(false), tolerance(1e-10),
-      svd_tolerance(1e-11), allow_E_growth(1), Dmax(0)
+      svd_tolerance(1e-11), allow_E_growth(1), Dmax(0),
+      do_eigenstate_fidelity(1), simp_tol(1e-13),
+      simp_sweeps(20), simp_Dmax(100)
     {}
 
     index sweeps;
@@ -39,15 +41,37 @@ namespace mps {
     double svd_tolerance;
     int allow_E_growth;
     index Dmax;
+    bool do_eigenstate_fidelity;
+    // Simplification options at computing the eigenstate fidelity
+    double simp_tol;
+    index simp_sweeps;
+    index simp_Dmax;
   };
+
+  double minimize(const RMPO &H, RMPS *psi, const MinimizerOptions &opt,
+                  const RMPO &constraint, double value,
+                  double &eig_fidelity, double &simp_err);
+  double minimize(const CMPO &H, CMPS *psi, const MinimizerOptions &opt,
+                  const CMPO &constraint, cdouble value,
+                  double &eig_fidelity, double &simp_err);
 
   double minimize(const RMPO &H, RMPS *psi, const MinimizerOptions &opt,
                   const RMPO &constraint, double value);
   double minimize(const CMPO &H, CMPS *psi, const MinimizerOptions &opt,
                   const CMPO &constraint, cdouble value);
 
+  double minimize(const RMPO &H, RMPS *psi, const MinimizerOptions &opt,
+                  double &eig_fidelity, double &simp_err);
+  double minimize(const CMPO &H, CMPS *psi, const MinimizerOptions &opt,
+                  double &eig_fidelity, double &simp_err);
+
   double minimize(const RMPO &H, RMPS *psi, const MinimizerOptions &opt);
   double minimize(const CMPO &H, CMPS *psi, const MinimizerOptions &opt);
+
+  double minimize(const RMPO &H, RMPS *psi,
+                  double &eig_fidelity, double &simp_err);
+  double minimize(const CMPO &H, CMPS *psi,
+                  double &eig_fidelity, double &simp_err);
 
   double minimize(const RMPO &H, RMPS *psi);
   double minimize(const CMPO &H, CMPS *psi);

@@ -22,22 +22,50 @@
 namespace mps {
 
   double minimize(const RMPO &H, RMPS *psi, const MinimizerOptions &opt,
+                  const RMPO &constraints, double value,
+                  double &eig_fidelity, double &simp_err)
+  {
+    Minimizer<RMPO> min(opt, H, *psi);
+    min.add_constraint(constraints, value);
+    return min.full_sweep(psi, eig_fidelity, simp_err);
+  }
+
+  double minimize(const RMPO &H, RMPS *psi, const MinimizerOptions &opt,
                   const RMPO &constraints, double value)
   {
     Minimizer<RMPO> min(opt, H, *psi);
     min.add_constraint(constraints, value);
-    return min.full_sweep(psi);
+    double eig_fidelity = -1.;
+    double simp_err = -1.;
+    return min.full_sweep(psi, eig_fidelity, simp_err);
+  }
+
+  double minimize(const RMPO &H, RMPS *psi, const MinimizerOptions &opt,
+                  double &eig_fidelity, double &simp_err)
+  {
+    Minimizer<RMPO> min(opt, H, *psi);
+    return min.full_sweep(psi, eig_fidelity, simp_err);
   }
 
   double minimize(const RMPO &H, RMPS *psi, const MinimizerOptions &opt)
   {
     Minimizer<RMPO> min(opt, H, *psi);
-    return min.full_sweep(psi);
+    double eig_fidelity =- 1.;
+    double simp_err = -1.;
+    return min.full_sweep(psi, eig_fidelity, simp_err);
+  }
+
+  double minimize(const RMPO &H, RMPS *psi,
+                  double &eig_fidelity, double &simp_err)
+  {
+    return minimize(H, psi, MinimizerOptions(), eig_fidelity, simp_err);
   }
 
   double minimize(const RMPO &H, RMPS *psi)
   {
-    return minimize(H, psi, MinimizerOptions());
+    double eig_fidelity = -1.;
+    double simp_err = -1.;
+    return minimize(H, psi, MinimizerOptions(), eig_fidelity, simp_err);
   }
 
 } // namespace mps
